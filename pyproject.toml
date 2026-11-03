@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pytest-filemon"
+version = "0.1.0"
+description = "File-level test impact analysis for pytest: per-test import dependencies recorded by wrapping __import__ (cached imports included), stored as local JSON, selected by file fingerprints."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.9"
+dependencies = [
+  "pytest>=7.4",
+]
+classifiers = [
+  "Framework :: Pytest",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
+  "Topic :: Software Development :: Testing",
+]
+
+[project.entry-points.pytest11]
+filemon = "pytest_filemon.plugin"
+
+[dependency-groups]
+dev = ["ruff>=0.8"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pytest_filemon"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff.lint]
+# BLE001/S110: the recorder and storage layer intentionally swallow broad
+# exceptions -- a tracking bug must never break the user's test run.
+ignore = ["BLE001", "S110"]
+
+[tool.ruff.lint.per-file-ignores]
+# demo/sqlalchemy_demo.py: a talk script -- terse reads and fire-and-forget
+# subprocess calls are the point.
+"demo/*" = ["SIM115", "PLW1510"]
